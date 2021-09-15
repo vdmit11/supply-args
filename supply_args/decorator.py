@@ -311,7 +311,7 @@ def _generate_supply_rules_for_single_source(
             continue
 
         arg_getter_fn = make_supply_arg_getter(spec.source, param.name)
-        if arg_getter_fn is SkipArgGetter:
+        if arg_getter_fn is SkipSupplyArgGetter:
             continue
 
         maybe_position = position if (param.kind is _POSITIONAL_OR_KEYWORD) else None
@@ -406,7 +406,7 @@ def make_supply_arg_getter(source: object, name: str) -> SupplyArgGetterFn:
     Then you could do something like this:
 
         >>> from functools import partial
-        >>> from supply_args import make_supply_arg_getter, SkipArgGetter
+        >>> from supply_args import make_supply_arg_getter, SkipSupplyArgGetter
 
         >>> class EnvVarsStorage:
         ...    def __init__(self, environ: dict):
@@ -425,7 +425,7 @@ def make_supply_arg_getter(source: object, name: str) -> SupplyArgGetterFn:
         ...     # Here we assume that `os.environ` is immutable.
         ...     # So, if the variable is not set here, then it will never be set, so we can skip it.
         ...     if not env_vars.is_set(env_var_name):
-        ...         return SkipArgGetter
+        ...         return SkipSupplyArgGetter
         ...
         ...     return partial(env_vars.get, env_var_name)
 
@@ -518,7 +518,7 @@ def make_supply_arg_getter_for_context_var(
     #
     # So the line below is needed to leave only the last getter
     if not _is_context_var_matching_to_param(ctx_var, name):
-        return SkipArgGetter
+        return SkipSupplyArgGetter
 
     def _get_ctxvar_value_or_default(default):
         # Why try/except instead of just ctx_var.get(default)?
@@ -555,7 +555,7 @@ def _is_context_var_matching_to_param(ctx_var: contextvars.ContextVar, param_nam
     return param_name == trailing_identifier_from_context_var_name
 
 
-def SkipArgGetter(default):
+def SkipSupplyArgGetter(default):
     """Skip argument (a special marker returned by :func:`make_supply_arg_getter`).
 
     This is needed for cases like this::
@@ -582,7 +582,7 @@ def SkipArgGetter(default):
 
     To resolve the issue, there is a special convention:
 
-    :func:`make_supply_arg_getter` may return a special marker :func:`SkipArgGetter`,
+    :func:`make_supply_arg_getter` may return a special marker :func:`SkipSupplyArgGetter`,
     that means: "There is no match for this argument, please skip it.".
 
     You can use it for extending :func:`make_supply_arg_getter` for your custom types, like this::
@@ -592,7 +592,7 @@ def SkipArgGetter(default):
             storage: MyCustomStorage, name: str
         ) -> SupplyArgGetterFn:
             if name not in storage:
-                return SkipArgGetter
+                return SkipSupplyArgGetter
 
             def _my_custom_storage_getter(default):
                 return storage.get(name, default)

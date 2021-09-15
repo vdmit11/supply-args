@@ -13,7 +13,7 @@
 
    .. autosummary::
    
-      SkipArgGetter
+      SkipSupplyArgGetter
       make_supply_arg_getter
       make_supply_arg_getter_for_callable
       make_supply_arg_getter_for_context_var

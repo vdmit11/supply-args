@@ -1,6 +1,6 @@
 # public API
 from .decorator import (
-    SkipArgGetter,
+    SkipSupplyArgGetter,
     SupplyArgGetterFn,
     SupplySpec,
     make_supply_arg_getter,
