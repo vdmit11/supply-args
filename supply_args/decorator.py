@@ -17,11 +17,6 @@ from typing import (
     Union,
 )
 
-# shortcuts, needed just to make code slightly more readable
-_EMPTY = inspect.Parameter.empty
-_KEYWORD_ONLY = inspect.Parameter.KEYWORD_ONLY
-_POSITIONAL_OR_KEYWORD = inspect.Parameter.POSITIONAL_OR_KEYWORD
-
 
 # Some type definitions to make @supply_args decorator friednly towards static typing.
 # It basically means that the decorator preserves the ReturnedValue inact.
@@ -243,6 +238,12 @@ SupplyRuleTuple = NewType(
         SupplyArgGetterFn,
     ],
 )
+
+
+# shortcuts, needed just to make code slightly more readable
+_EMPTY = inspect.Parameter.empty
+_KEYWORD_ONLY = inspect.Parameter.KEYWORD_ONLY
+_POSITIONAL_OR_KEYWORD = inspect.Parameter.POSITIONAL_OR_KEYWORD
 
 
 def _execute_supply_rules(rules: Sequence[SupplyRuleTuple], args: tuple, kwargs: dict):
