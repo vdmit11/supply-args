@@ -17,7 +17,6 @@ from typing import (
     Union,
 )
 
-
 # Some type definitions to make @supply_args decorator friednly towards static typing.
 # It basically means that the decorator preserves the ReturnedValue inact.
 # So when you call a decorated function, your IDE knows type of the returned value.
