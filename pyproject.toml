@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "supply-args"
-version = "0.0.1"
+version = "0.0.3"
 description = "Take function arguments from context variables and various other sources (WARNING: unstable alpha version. Things may break)."
 license = "MIT"
 authors = ["Dmitry Vasilyanov <vdmit11@gmail.com>"]
