@@ -1,5 +1,5 @@
-﻿supply\_args.decorator
-======================
+﻿module: supply_args.decorator
+=============================
 
 .. automodule:: supply_args.decorator
 
