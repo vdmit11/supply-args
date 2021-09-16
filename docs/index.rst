@@ -13,6 +13,7 @@ Pages:
 .. toctree::
    :maxdepth: 1
 
+   introduction
 
 Modules:
    
