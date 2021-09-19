@@ -440,6 +440,27 @@ def make_supply_arg_getter(source: object, name: str) -> SupplyArgGetterFn:
 
 
 @make_supply_arg_getter.register
+def make_supply_arg_getter_for_mapping(mapping: abc.Mapping, name: str) -> SupplyArgGetterFn:
+    # make_supply_arg_getter() implementation for dict-like objects
+    #
+    # For example, if you do thos:
+    #
+    #     some_dict = dict()
+    #
+    #     @supply_args(locale=some_dict, timezone=some_dict)
+    #     def do_something_useful(locale='en', timezone='UTC'):
+    #         ...
+    #
+    # Then, on call, the effect will be (roughly) this:
+    #
+    #    do_something_useful(
+    #        locale=some_dict.get('locale', 'en'),
+    #        timezone=some_dict.get('timezone', 'UTC'),
+    #    )
+    return functools.partial(mapping.get, name)
+
+
+@make_supply_arg_getter.register
 def make_supply_arg_getter_for_callable(source: abc.Callable, name: str) -> SupplyArgGetterFn:
     # make_supply_arg_getter() implementation for lambdas and other callables
     #
