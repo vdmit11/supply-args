@@ -2,7 +2,7 @@ from contextvars import ContextVar
 
 import pytest
 
-from supply_args import supply_args
+from supply_args import SupplySpec, supply_args
 
 
 def test__supply_args_var_objects():
@@ -83,10 +83,10 @@ def test__error_is_raised__for_non_existent_parameter():
     with pytest.raises(AssertionError):
         # check a more complex form, with multiple parameter names
         @supply_args(
-            {
-                "source": lambda default: default,
-                "names": ["locale", "timezone", "non_existent_parameter"],
-            }
+            SupplySpec(
+                source=lambda default: default,
+                names=["locale", "timezone", "non_existent_parameter"],
+            )
         )
         def _get_values_2(locale=None, timezone=None):
             return locale, timezone

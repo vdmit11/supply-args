@@ -64,7 +64,7 @@ class SupplySpec:
 
     Arguments to the :func:`supply_args` decorator can come in several different forms.
 
-    It is a bit of hassle to take into accoutn all these different forms of arguments everywhere,
+    It is a bit of hassle to take into accoutnt all these different forms of arguments everywhere,
     so they're all normalized, and converted to ``SupplySpec`` objects.
 
     So that, for example, this::
@@ -78,7 +78,7 @@ class SupplySpec:
         ]
 
 
-    Keyword arguments are also converted to ``SupplySpec`` objects::
+    and keyword arguments are also converted to ``SupplySpec`` objects::
 
         @supply_args(
             locale=registry,
@@ -92,29 +92,10 @@ class SupplySpec:
             SupplySpec(names=['user_id'], source=user_id_context_var),
         ]
 
-
-    ...and dictionaries are also converted to ``SupplySpec`` objects::
-
-         @supply_args(
-             {
-                 'names': ['locale', 'timezone'],
-                 'source': registry,
-             },
-             {
-                 'names': ['user_id']
-                 'source': user_id_context_var,
-             }
-         )
-         # internally converted to:
-         [
-             SupplySpec(names=['locale', 'timezone'], source=registry),
-             SupplySpec(names=['user_id'], source=user_id_context_var),
-         ]
-
     Each argument to ``@supply_args()`` becomes a ``SupplySpec`` instance.
     This process is called here "normalization".
 
-    So after the normalization procedure, all different forms of arguments become just a stream
+    So after the normalization procedure, different forms of arguments become just a stream
     of ``SupplySpec`` objects, with well-known structure, which is easy to deal with
     (much easier than coding if/else branches to support several forms of arguments everywhere).
 
@@ -145,21 +126,8 @@ class SupplySpec:
     """
 
     names: Optional[Collection[str]] = None
-    """Names of function arguments that affected..
+    """Names of affected function parameters.
 
-    A source may match to many arguments simultaneously, for example::
-
-        @supply_args({
-            'source': registry,
-            'names': ['locale', 'timezone']
-        })
-        def fn(user_id=None, timezone=None, locale=None):
-            pass
-
-    In that example, ``locale`` and ``timezone`` are taken from ``registry``
-    (whereas ``user_id`` argument is ignored).
-
-    This ``names`` member is optional.
     If not provided, the ``names`` are chosen automatically, depending on the ``source``:
 
       - for ``ContextVar`` objects, the parameter name is guessed from ``ContextVar.name`` attribute
@@ -170,27 +138,27 @@ class SupplySpec:
     """
 
 
-def _normalize_spec(name, source) -> SupplySpec:
-    # There are 4 different ways to specify arguments for the @supply_args() decorator.
-    # Here we recognize all 4 different cases, and convert them to SupplySpec object.
+def _normalize_spec(name, value) -> SupplySpec:
+    # There are several different ways to specify arguments for the @supply_args() decorator.
+    # Here we recognize all cases, and convert them to SupplySpec() object if needed.
     #
     # So, after the normalization procedure, the messy arguments to @supply_args decorator
     # become just a sequence of SupplySpec objects, which is much easier to reason about,
     # since SupplySpec has a well-defined structure.
-    if isinstance(source, dict):
+    if isinstance(value, SupplySpec):
         if name:
-            # @supply_args(timezone={'source': registry})
-            spec = SupplySpec(**source, names=[name])
+            # @supply_args(timezone=SourceSpec(source=registry))
+            spec = dataclasses.replace(value, names=[name])
         else:
-            # @supply_args({'source': registry, 'names': ['locale', 'timezone']})
-            spec = SupplySpec(**source)
+            # @supply_args(SourceSpec(source=registry, names=['timezone']))
+            spec = value
     else:
         if name:
             # @supply_args(locale=registry, timezone=registry)
-            spec = SupplySpec(source=source, names=[name])
+            spec = SupplySpec(source=value, names=[name])
         else:
             # @supply_args(registry)
-            spec = SupplySpec(source=source)
+            spec = SupplySpec(source=value)
 
     return spec
 
