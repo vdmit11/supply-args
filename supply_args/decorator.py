@@ -470,7 +470,7 @@ def make_supply_arg_getter_for_callable(source: abc.Callable, name: str) -> Supp
     #        locale=get_current_locale,
     #        timezone=get_current_timezone,
     #    )
-    #    def do_something-_useful(locale='en', timezone='UTC'):
+    #    def do_something_useful(locale='en', timezone='UTC'):
     #        ...
     #
     # Then, on call, the effect will be (roughly) this:
